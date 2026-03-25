@@ -1,0 +1,476 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<HTML lang="en-US">
+<HEAD>
+    <META NAME="ROBOTS" CONTENT="NOINDEX"/>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5">
+
+    <!-- For all browsers -->
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png"/>
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png"/>
+
+    <!-- For Google and Android -->
+    <link rel="icon" type="image/png" sizes="48x48" href="favicon-48x48.png"/>
+
+    <!-- For iPhone / Modern Browsers -->
+    <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="favicon-180x180.png"/>
+
+    <BASE HREF="https://ocfsdwi.infinitecampus.org/campus/"/>
+    <TITLE>Login | Oak Creek Franklin, WI</TITLE>
+    <script src="scripts/login.js"></script>
+    <SCRIPT language="Javascript">
+        function start(){
+            /*conditional to check contents of page to only refresh in specific scenarios to get around issues such
+            as plugins adding in their own frames such as documented in SIS-123400. We refresh the page to prevent
+            potential edge case errors with a session timing out and having the login page display in an inner iframe.
+             */
+            if(parent.frames.length !== 0 && (top.document.getElementById('mainBody') !== null) || top.document.getElementsByTagName("ic-nav-wrapper-app").length > 0) {
+                
+                top.location = this.location;
+                
+            }
+            document.getElementById("username").focus();
+            if (location.hash) {
+                var successURLObj = document.getElementById("successURL");
+                if (successURLObj && successURLObj.value.indexOf("#") === -1) {
+                    successURLObj.value = successURLObj.value + location.hash;
+                }
+            }
+            
+                document.getElementById("form_signin").style.paddingTop = "0";
+                var status = "";
+                if (status === "samlLoginThruCampus") {
+                    // There is a race condition and alert occurs before changing the styles. We setTimeout() on the alert.
+                    setTimeout(function(){
+                        alert("This user account requires the use of the login button above the Campus username and password text boxes.");
+                        document.getElementById("samlloginlink").focus();
+                    }, 50);
+                }
+            
+            // clear HR items from session storage - needed if a user clicked the 'logoff' button but didn't close the window
+            sessionStorage.removeItem('currentHRTool');
+            sessionStorage.removeItem('personnelMasterAdvancedSearch');
+        }
+        function sendEmail() {
+            let email = encodeURIComponent(document.getElementById('useremail').value);
+            if(email === ''){
+                document.getElementById('userEmailDialogError').style.display = 'block';
+                document.getElementById('useremail').setAttribute('aria-invalid', 'true');
+            }
+            else {
+                document.getElementById('useremail').setAttribute('aria-invalid', 'false');
+                document.getElementById('userEmailDialogError').style.display = 'none';
+                let appName = 'oak_creek_franklin';
+                let xhr = new XMLHttpRequest();
+                xhr.overrideMimeType("text/html");
+                xhr.open("GET", 'username?email=' + email + '&appName=' + appName);
+                xhr.send();
+                document.getElementById('usernameRecoverAlert').style.display = 'block';
+            }
+        }
+        function sendPasswordEmail() {
+            let username = encodeURIComponent(document.getElementById('usernameinput').value);
+            if(username === ''){
+                document.getElementById('usernameDialogError').style.display = 'block';
+                document.getElementById('usernameinput').setAttribute('aria-invalid', 'true');
+            }
+            else {
+                document.getElementById('usernameinput').setAttribute('aria-invalid', 'false');
+                document.getElementById('usernameDialogError').style.display = 'none';
+                let appName = 'oak_creek_franklin';
+                let xhr = new XMLHttpRequest();
+                xhr.overrideMimeType("text/html");
+                xhr.open("GET", 'passwordreset?username=' + username + '&appName=' + appName + '&fromPortal=false');
+                xhr.send();
+                document.getElementById('passwordRecoverAlert').style.display = 'block';
+            }
+        }
+        function retry() {
+            document.getElementById("usernamebox").innerHTML = '<input id="useremail" class="passwordResetInput" type="text" value="" placeholder="Enter Account Security Email" aria-label="Account Security Email"/>' +
+                '<input id="usernamebutton" class="passwordResetButton" type="button" onclick="sendEmail();" value="Continue"/>'
+        }
+        function retryPassword() {
+            document.getElementById("passwordbox").innerHTML = '<input id="usernameinput" class="passwordResetInput" type="text" value="" placeholder="Enter Username" aria-label="Username"/>' +
+                '<input id="passwordbutton" class="passwordResetButton" type ="button"  onclick="sendPasswordEmail()" value="Continue"/>'
+        }
+        function toggleSSOError(){
+                if(document.getElementById('aShowSSOErr').textContent === "(Show detail)"){
+                    document.getElementById('aShowSSOErr').textContent = "(Show less)";
+                    document.getElementById('divSSOError').style="display:block"
+                }else{
+                    document.getElementById('aShowSSOErr').textContent = "(Show detail)";
+                    document.getElementById('divSSOError').style="display:none"
+                }
+        }
+        function reCaptchaCallback() {
+            const reCaptchaSiteKey = "";
+
+            grecaptcha.render("recaptcha", {
+                'sitekey': reCaptchaSiteKey
+            });
+        }
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const contextComm = parent.campusContextCommunicator;
+            if(contextComm){
+                contextComm.redirectToLogin();
+            }
+        });
+    </script>
+    <script>
+        function resetSSOConfig() {
+            const select = document.getElementById("samlLoginSelect");
+            select.selectedIndex = 0;
+        }
+    </script>
+    <link rel="stylesheet" type="text/css" href="styles/login.css?v=4" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+</HEAD>
+<body onload='start()'>
+<header class="logocontainer">
+    <img class="logo logoEdTech" alt="Infinite Campus The Tech In EdTech Logo" src="images/logos/logoEdTech.svg">
+</header>
+<main class="container">
+    <div class="frmcontainer">
+        <div class="editionbox">
+            <div class="editionmsgtd">
+                <h1 class="editionText">Student Information System</h1>
+            </div>
+        </div>
+        
+            
+                
+                
+                    
+                        <div style="text-align: left;padding-left: 25px;padding-top: 50px;">
+                            <a id="samlloginlink" href="https://ocfsdwi.infinitecampus.org/campus/SSO/oak_creek_franklin/sis?configID=1" class="samlLogin">
+                                Single Sign-On (Google)
+                            </a>
+                        </div>
+                    
+                
+            
+
+            <span style="width:250px;">
+                <div class="separator">or</div>
+            </span>
+            
+        
+        
+        
+        
+        <form method="POST" id="form_signin" accept-charset="utf-8" action="https://ocfsdwi.infinitecampus.org/campus/verify.jsp">
+            <input type="hidden" name="appName" value="oak_creek_franklin"/>
+            <input type="hidden" id="screen" name="screen" value=""/>
+            
+            
+            
+            <div class="container span2">
+                <div class="inputLabel" style="padding: 0 0 4px 2px"><label for="username">Username: <span style="color:#cb242b">(Required)</span></label></div>
+                <input class="span2 inputText" type="text" id="username" name="username" title="Enter your username" autocomplete="username" required/>
+            </div>
+            <div class="container span2">
+                <div class="inputLabel" style="padding: 0 0 4px 2px"><label for="password">Password: <span style="color:#cb242b">(Required)</span></label></div>
+                <input class="span2 inputText" type="password" id="password" name="password" title="Enter your password" autocomplete="current-password" required/>
+            </div>
+            <span id="password-error" class="errorMessage" style="display: none">Incorrect Username and/or Password</span>
+            
+            
+            
+            <div class="container span8" style="padding-top: 2px">
+                <div class="span2 alignright">
+                    <button class="signinbtn" id="signinbtn" type="submit" onclick="verify(this)">
+                        Log In
+                    </button>
+                </div>
+                <div class="span4 alignleft">
+                    <div class="statusmsg"></div>
+                </div>
+            </div>
+            <input type="hidden" name="useCSRFProtection" value="true" />
+        </form>
+        <div class="passwordreset" style="padding-bottom:25px">
+                    
+
+<div class="span2">
+  <ul class="helpButtonList">
+    
+    <li class="helpButtonItem">
+      <button
+        id="passwordHelp"
+        class="buttonDefault"
+        type="button"
+        onclick="toggle('password');return false"
+      >
+        Forgot Password?
+      </button>
+    </li>
+    <li class="helpButtonItem">
+      <button
+        id="usernameHelp"
+        class="buttonDefault"
+        type="button"
+        onclick="toggle('username');return false"
+      >
+        Forgot Username?
+      </button>
+    </li>
+    
+    <li class="helpButtonItem">
+      <button
+        id="helpToggle"
+        class="buttonDefault"
+        type="button"
+        onclick="toggle('problems');return false"
+        aria-controls="helpbox"
+      >
+        Show Help
+      </button>
+      <span class="sr-only">Help text will display below the help button</span>
+    </li>
+  </ul>
+</div>
+<dialog
+  id="usernameDialog"
+  class="helpDialog"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="usernameHeader"
+>
+  <div id="dialogHeader" class="dialogHeader">
+    <h2 id="usernameHeader" style="flex-grow: 1">Username Recovery</h2>
+    <input
+      id="closeUsernameRecover"
+      class="closeButton"
+      type="button"
+      style="cursor: pointer"
+      onclick="closeDialog('username')"
+      value="&times"
+      aria-label="Close"
+    />
+  </div>
+  <div>
+    <form class="helpForm">
+      <span
+        id="usernameRecoverAlert"
+        class="alert"
+        role="alert"
+        style="display: none"
+      >
+        <p style="padding-top: 2px; padding-left: 4px">
+          An email has been sent to the provided address.
+        </p>
+      </span>
+      <label class="inputLabel" for="useremail"
+        >User Security Email:
+        <span style="color: #cb242b">(Required)</span></label
+      >
+      <div style="padding-top: 6px">
+        <input
+          id="useremail"
+          class="inputText"
+          type="text"
+          value=""
+          required
+          aria-invalid="false"
+          aria-errormessage="userEmailDialogError"
+          autocomplete="email"
+        />
+      </div>
+      <span
+        id="userEmailDialogError"
+        style="display: none; padding-top: 4px"
+        class="errorMessage"
+        role="alert"
+        >User email is required</span
+      >
+    </form>
+  </div>
+  <div id="dialogFooter" class="dialogFooter">
+    <div class="button-group">
+      <input id="continueUsernameButton" class="buttonDefault buttonPrimary"
+      type="button" onclick="sendEmail()" value="Submit"/> <input id="cancelUsernameRecover"
+      class="buttonDefault" type="button" onclick="closeDialog('username')"
+      value="Close"/>
+    </div>
+  </div>
+</dialog>
+<dialog
+  id="passwordDialog"
+  class="helpDialog"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="passwordHeader"
+>
+  <div class="dialogHeader">
+    <h2 id="passwordHeader" style="flex-grow: 1">Password Recovery</h2>
+    <input
+      id="closePasswordRecover"
+      class="closeButton"
+      type="button"
+      style="cursor: pointer"
+      onclick="closeDialog('password')"
+      value="&times"
+      aria-label="Close"
+    />
+  </div>
+  <div>
+    <form class="helpForm">
+      <span
+        id="passwordRecoverAlert"
+        class="alert"
+        role="alert"
+        style="display: none"
+      >
+        <p style="padding-top: 2px; padding-left: 4px">
+          An email has been sent to the address associated with the account provided.
+        </p>
+      </span>
+      <label class="inputLabel" for="usernameinput"
+        >Username: <span style="color: #cb242b">(Required)</span></label
+      >
+      <div style="padding-top: 6px">
+        <input
+          id="usernameinput"
+          class="inputText"
+          type="text"
+          value=""
+          required
+          aria-invalid="false"
+          aria-errormessage="usernameDialogError"
+          autocomplete="username"
+        />
+      </div>
+      <span
+        id="usernameDialogError"
+        style="display: none; padding-top: 4px"
+        class="errorMessage"
+        role="alert"
+        >Username is required</span
+      >
+    </form>
+  </div>
+  <div class="dialogFooter">
+    <div class="button-group">
+      <input id="continuePasswordButton" class="buttonDefault buttonPrimary"
+      type="button" onclick="sendPasswordEmail()" value="Submit"/> <input id="cancelPasswordRecover"
+      class="buttonDefault" type="button" onclick="closeDialog('password')"
+      value="Close"/>
+    </div>
+  </div>
+</dialog>
+
+                <div id="helpbox" style="display:none;">
+                    <hr class="loginhr"style="margin-left:0; margin-right:0;" >
+                    <div style="display: inline-flex">
+                        <h2 style="padding-right: 6px;">Help</h2>
+                        <button
+                            id="a11yInfo"
+                            class="login-info-button-sis"
+                            type="button"
+                            onclick="toggle('a11y');return false"
+                            aria-label="Information - Accessibility"
+                        ><span class="info-circle-sis">i</span></button>
+                    </div>
+                    <dialog
+                            id="a11yDialog"
+                            class="a11yDialog"
+                            role="dialog"
+                            aria-modal="true"
+                            aria-labelledby="a11yHeader"
+                    >
+                        <div id="dialogHeader" class="dialogHeader">
+                            <h2 id="a11yHeader" style="flex-grow: 1; font-size: 18px;">Information - Accessibility</h2>
+                            <input
+                                    id="closeA11yHeader"
+                                    class="closeButton"
+                                    type="button"
+                                    style="cursor: pointer"
+                                    onclick="closeDialog('a11y')"
+                                    value="&times"
+                                    aria-label="Close"
+                            />
+                        </div>
+                        <div class="dialogContent">
+                            Infinite Campus is committed to ensuring digital accessibility for people with disabilities.
+                            We are continually improving the user experience for everyone, and applying the relevant accessibility
+                            standards, however, please note that third party content is not tested for accessibility.
+                        </div>
+                        <div id="a11yFooter" class="dialogFooter">
+                            <div class="button-group">
+                                <input id="closeA11yDialog"
+                                       class="buttonDefault" type="button" onclick="closeDialog('a11y')" value="Close"/>
+                            </div>
+                        </div>
+                    </dialog>
+                    <p><strong>Please contact the OCFSD Infinite Campus helpdesk at helpdesk&#64;ocfsd.org for assistance with accounts.  <br /></strong></p>
+<br/><br><p> System Support Email Address: <a href="mailto:helpdesk@ocfsd.org" target="_top">helpdesk@ocfsd.org</a></p>
+
+                    <p class="appServer">App Server: c1951wi-app001</p>
+                </div>
+            </div>
+    </div>
+    
+</main>
+
+<footer class="appinfo">
+    <div>Version: Campus-2611.3 | Oak Creek Franklin, WI</div>
+    <div>&copy; 2003-2026 Infinite Campus, Inc.</div>
+    <div><a href="https://www.infinitecampus.com" target="_blank">www.infinitecampus.com</a></div>
+</footer>
+<script>
+    document.getElementById("useremail").addEventListener("keyup", function(event) {
+        if (event.which === 13) {
+            document.getElementById("usernamebutton").click();
+        }
+    });
+
+    document.getElementById("usernameinput").addEventListener("keyup", function(event) {
+        if (event.which === 13) {
+            document.getElementById("passwordbutton").click();
+        }
+    });
+    
+    
+</script>
+</body>
+</HTML>
