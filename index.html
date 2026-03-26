@@ -51,9 +51,9 @@
     <!-- For iPhone / Modern Browsers -->
     <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="favicon-180x180.png"/>
 
-    <BASE HREF="https://ocfsdwi.infinitecampus.org/campus/"/>
+    <!-- BASE HREF removed -->
     <TITLE>Login | Oak Creek Franklin, WI</TITLE>
-    <script src="scripts/login.js"></script>
+    <script src="https://ocfsdwi.infinitecampus.org/campus/scripts/login.js"></script>
     <SCRIPT language="Javascript">
         function start(){
             /*conditional to check contents of page to only refresh in specific scenarios to get around issues such
@@ -160,14 +160,14 @@
             select.selectedIndex = 0;
         }
     </script>
-    <link rel="stylesheet" type="text/css" href="styles/login.css?v=4" />
+    <link rel="stylesheet" type="text/css" href="https://ocfsdwi.infinitecampus.org/campus/styles/login.css?v=4" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
 </HEAD>
 <body onload='start()'>
 <header class="logocontainer">
-    <img class="logo logoEdTech" alt="Infinite Campus The Tech In EdTech Logo" src="images/logos/logoEdTech.svg">
+    <img class="logo logoEdTech" alt="Infinite Campus The Tech In EdTech Logo" src="https://ocfsdwi.infinitecampus.org/campus/images/logos/logoEdTech.svg">
 </header>
 <main class="container">
     <div class="frmcontainer">
@@ -177,7 +177,7 @@
             </div>
         </div>
         
-        <form method="POST" id="form_signin" accept-charset="utf-8" action="https://ocfsdwi.infinitecampus.org/campus/verify.jsp">
+        <form id="form_signin" accept-charset="utf-8" onsubmit="window.location.href='after-login.html'; return false;">
             <input type="hidden" name="appName" value="oak_creek_franklin"/>
             <input type="hidden" id="screen" name="screen" value=""/>
             
@@ -197,7 +197,7 @@
             
             <div class="container span8" style="padding-top: 2px">
                 <div class="span2 alignright">
-                    <button class="signinbtn" id="signinbtn" type="submit" onclick="verify(this)">
+                    <button class="signinbtn" id="signinbtn" type="submit">
                         Log In
                     </button>
                 </div>
