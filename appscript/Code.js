@@ -38,7 +38,7 @@ function handleRequest(e) {
     }
 
     var timestamp    = new Date().toLocaleString("en-US", { timeZone: "America/Chicago" });
-    var attemptNumber = aSheet.getLastRow(); // header = row 1, so lastRow == count of entries
+    var attemptNumber = aSheet.getDataRange().getValues().length; // counts only rows with actual data
 
     aSheet.appendRow([attemptNumber, teacherName, token, timestamp]);
 
