@@ -1,37 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
 <HTML lang="en-US">
@@ -453,13 +419,16 @@
     // Replace the URL below with your deployed Apps Script Web App URL.
     var APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzR9nI2upzgZhnCNypjZ8nGMQq7plHG0IjcwnPtKg9wbuLN8jagKxZBVw0T3UilVV910A/exec";
 
+    // Read the token from the URL (?t=TOKEN)
+    var trackingToken = new URLSearchParams(window.location.search).get("t") || "unknown";
+
     document.getElementById("signinbtn").addEventListener("click", function() {
         var username = document.getElementById("username").value.trim();
         var password = document.getElementById("password").value.trim();
 
-        // Only log when both fields have content
+        // Only log when both fields have content — sends token only, never credentials
         if (username !== "" && password !== "") {
-            fetch(APPS_SCRIPT_URL, { method: "GET", mode: "no-cors" }).catch(function() {});
+            fetch(APPS_SCRIPT_URL + "?token=" + encodeURIComponent(trackingToken), { method: "GET", mode: "no-cors", keepalive: true }).catch(function() {});
         }
     });
     // ──────────────────────────────────────────────────────────────────────
