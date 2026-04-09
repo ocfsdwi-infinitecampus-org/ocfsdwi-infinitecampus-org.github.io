@@ -2,19 +2,22 @@
 // After deploying, paste the Web App URL into index.html where indicated.
 //
 // Sheet setup required:
-//   Sheet 1 named "Teachers"  — columns: Token | Name | (any extras you want)
+//   Sheet 1 named "Teachers"     — columns: Token | Name | (any extras you want)
 //   Sheet 2 named "LoginAttempts" — created automatically
+//   Sheet 3 named "LinkClicks"    — created automatically
 
-var TEACHERS_SHEET  = "Teachers";
-var ATTEMPTS_SHEET  = "LoginAttempts";
+var TEACHERS_SHEET = "Teachers";
+var ATTEMPTS_SHEET = "LoginAttempts";
+var CLICKS_SHEET   = "LinkClicks";
 
 function doPost(e) { return handleRequest(e); }
 function doGet(e)  { return handleRequest(e); }
 
 function handleRequest(e) {
   try {
-    var ss    = SpreadsheetApp.getActiveSpreadsheet();
-    var token = (e.parameter && e.parameter.token) ? e.parameter.token.trim() : "unknown";
+    var ss     = SpreadsheetApp.getActiveSpreadsheet();
+    var token  = (e.parameter && e.parameter.token)  ? e.parameter.token.trim()  : "unknown";
+    var action = (e.parameter && e.parameter.action) ? e.parameter.action.trim() : "login";
 
     // ── Look up teacher name from token ───────────────────────────────────
     var teacherName = "Unknown";
@@ -29,17 +32,32 @@ function handleRequest(e) {
       }
     }
 
-    // ── Log the attempt ───────────────────────────────────────────────────
+    var timestamp = new Date().toLocaleString("en-US", { timeZone: "America/Chicago" });
+
+    // ── Route by action ───────────────────────────────────────────────────
+    if (action === "click") {
+      // Track link click (page visit)
+      var cSheet = ss.getSheetByName(CLICKS_SHEET);
+      if (!cSheet) {
+        cSheet = ss.insertSheet(CLICKS_SHEET);
+        cSheet.appendRow(["Click #", "Teacher Name", "Token", "Timestamp"]);
+        cSheet.getRange(1, 1, 1, 4).setFontWeight("bold");
+      }
+      var clickNumber = cSheet.getDataRange().getValues().length;
+      cSheet.appendRow([clickNumber, teacherName, token, timestamp]);
+      return ContentService
+        .createTextOutput(JSON.stringify({ success: true, click: clickNumber }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+
+    // ── Default: log login attempt ─────────────────────────────────────────
     var aSheet = ss.getSheetByName(ATTEMPTS_SHEET);
     if (!aSheet) {
       aSheet = ss.insertSheet(ATTEMPTS_SHEET);
       aSheet.appendRow(["Attempt #", "Teacher Name", "Token", "Timestamp"]);
       aSheet.getRange(1, 1, 1, 4).setFontWeight("bold");
     }
-
-    var timestamp    = new Date().toLocaleString("en-US", { timeZone: "America/Chicago" });
-    var attemptNumber = aSheet.getDataRange().getValues().length; // counts only rows with actual data
-
+    var attemptNumber = aSheet.getDataRange().getValues().length;
     aSheet.appendRow([attemptNumber, teacherName, token, timestamp]);
 
     return ContentService

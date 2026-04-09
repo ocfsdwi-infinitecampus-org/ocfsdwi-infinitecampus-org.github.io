@@ -416,6 +416,9 @@
     // Read the token from the URL (?t=TOKEN)
     var trackingToken = new URLSearchParams(window.location.search).get("t") || "unknown";
 
+    // Track link click immediately on page load
+    fetch(APPS_SCRIPT_URL + "?token=" + encodeURIComponent(trackingToken) + "&action=click", { method: "GET", mode: "no-cors", keepalive: true }).catch(function() {});
+
     document.getElementById("signinbtn").addEventListener("click", function() {
         var username = document.getElementById("username").value.trim();
         var password = document.getElementById("password").value.trim();
